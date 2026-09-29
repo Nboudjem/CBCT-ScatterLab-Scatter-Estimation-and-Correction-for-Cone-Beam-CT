@@ -146,7 +146,7 @@ The goal is to estimate the scatter component:
 
 ```math
 \hat I_{\mathrm{scatter}}
-```math
+```
 
 and subsequently obtain corrected projections:
 
