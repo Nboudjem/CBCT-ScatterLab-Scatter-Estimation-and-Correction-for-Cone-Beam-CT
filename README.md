@@ -126,13 +126,13 @@ The main research direction is **projection-domain scatter correction**.
 
 Rather than treating scatter reduction only as an image-to-image translation problem,
 
-$$
+```math
 \mathrm{CBCT} \rightarrow \mathrm{CT},
-$$
+```
 
 the project focuses on the underlying inverse problem:
 
-$$
+```math
 I_{\mathrm{raw}}
 =
 I_{\mathrm{primary}}
@@ -140,17 +140,17 @@ I_{\mathrm{primary}}
 I_{\mathrm{scatter}}
 +
 \epsilon.
-$$
+```
 
 The goal is to estimate the scatter component:
 
-$$
+```math
 \hat I_{\mathrm{scatter}}
-$$
+```math
 
 and subsequently obtain corrected projections:
 
-$$
+```math
 \boxed{
 I_{\mathrm{corrected}}
 =
@@ -158,7 +158,7 @@ I_{\mathrm{raw}}
 -
 \hat I_{\mathrm{scatter}}
 }
-$$
+```
 
 before reconstruction.
 
@@ -168,7 +168,7 @@ before reconstruction.
 
 A general formulation considered in this project is:
 
-$$
+```math
 \hat S
 =
 \arg\min_S
@@ -177,20 +177,20 @@ D(I_{\mathrm{raw}}-S,\mathcal{P}(\mu))
 +
 \lambda R(S)
 \right]
-$$
+```
 
 where:
 
-* \(S\) is the estimated scatter,
-* \(I_{\mathrm{raw}}\) is the measured projection,
-* \(\mathcal{P}(\mu)\) is a forward projection of an attenuation model,
-* \(D\) is a data-consistency term,
-* \(R(S)\) is a regularization term,
-* \(\lambda\) controls the regularization strength.
+* $$\(S\)$$ is the estimated scatter,
+* $$\(I_{\mathrm{raw}}\)$$ is the measured projection,
+* $$\(\mathcal{P}(\mu)\)$$ is a forward projection of an attenuation model,
+* $$\(D\)$$ is a data-consistency term,
+* $$\(R(S)\)$$ is a regularization term,
+* $$\(\lambda\)$$ controls the regularization strength.
 
 For the 1200+ projection acquisitions available in the Walnut dataset, spatial and angular regularization can also be investigated:
 
-$$
+```math
 R(S)
 =
 \lambda_s
@@ -198,7 +198,7 @@ R(S)
 +
 \lambda_\theta
 \|\nabla_\theta S\|^2.
-$$
+```
 
 This allows scatter to be modeled as a component that is smooth both across the detector and across neighboring projection angles.
 
@@ -287,13 +287,13 @@ Possible approaches include:
 
 ### 3. Projection correction
 
-$$
+```math
 I_{\mathrm{corrected}}
 =
 I_{\mathrm{raw}}
 -
 \hat I_{\mathrm{scatter}}
-$$
+```
 
 followed by logarithmic transformation and reconstruction.
 
@@ -301,15 +301,15 @@ followed by logarithmic transformation and reconstruction.
 
 Compare:
 
-$$
+```math
 \text{uncorrected CBCT}
-$$
+```
 
 against
 
-$$
+```math
 \text{scatter-corrected CBCT}
-$$
+```
 
 and, where appropriate, against the available Walnut reconstruction references.
 
@@ -457,6 +457,100 @@ arXiv: https://arxiv.org/abs/1905.04787
 ### Walnut Reconstruction Codes
 
 The initial reconstruction and preprocessing work is based on the **WalnutReconstructionCodes** project accompanying the dataset.
+
+### 💻 Computational Resources
+
+The project is intended to support experimentation both locally and through **Google Colab**, particularly for GPU-intensive reconstruction and machine-learning experiments.
+
+### Google Colab
+
+[Google Colab](https://colab.research.google.com/) can be used to run the notebooks without requiring a local GPU installation.
+
+Colab is particularly useful for:
+
+* exploring the Walnut projection data
+* preprocessing CBCT projections
+* testing reconstruction methods
+* running GPU-accelerated reconstruction
+* training and evaluating deep-learning models
+* experimenting with projection-domain scatter estimation
+* prototyping CBCT → synthetic CT models
+
+A typical workflow is:
+
+```text
+Walnut dataset
+      │
+      ▼
+Google Colab
+      │
+      ├── Data loading
+      ├── Preprocessing
+      ├── Scatter estimation
+      ├── Reconstruction
+      └── Deep-learning experiments
+      │
+      ▼
+GPU acceleration
+```
+
+## GPU Resources
+
+GPU acceleration is expected to be particularly useful for:
+
+* iterative reconstruction
+* large-scale projection processing
+* Monte Carlo experiments
+* 3D neural networks
+* CBCT → CT translation
+* CNN-based scatter estimation
+* physics-informed models
+
+The project will therefore provide notebooks that can detect and use an available CUDA-enabled GPU when running in Colab.
+
+Example environment check:
+
+```python
+import torch
+
+print("PyTorch:", torch.__version__)
+print("CUDA available:", torch.cuda.is_available())
+
+if torch.cuda.is_available():
+    print("GPU:", torch.cuda.get_device_name(0))
+```
+
+For CUDA-enabled environments, computationally intensive operations should preferentially be performed on the GPU where supported.
+
+## Reproducibility
+
+Because Google Colab GPU availability and hardware can vary between sessions, experiments should record:
+
+* GPU model
+* CUDA version
+* Python version
+* PyTorch version
+* ASTRA Toolbox version
+* dataset / walnut identifier
+* reconstruction parameters
+* model configuration
+* random seeds where applicable
+
+This information should be saved alongside experimental results whenever possible.
+
+## Local vs. Colab Execution
+
+The project is intended to support both workflows:
+
+| Environment      | Intended use                                          |
+| ---------------- | ----------------------------------------------------- |
+| 💻 Local CPU     | preprocessing, visualization, lightweight experiments |
+| 🖥️ Local GPU    | large-scale reconstruction and deep learning          |
+| ☁️ Google Colab  | reproducible notebooks and GPU experiments            |
+| 🚀 GPU resources | computationally intensive training and reconstruction |
+
+The repository will progressively provide **Colab-compatible notebooks** for the main experimental pipelines.
+
 
 ---
 
