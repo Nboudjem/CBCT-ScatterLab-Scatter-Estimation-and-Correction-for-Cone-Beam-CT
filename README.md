@@ -28,6 +28,7 @@ Scatter can contribute to:
 A simplified measurement model is:
 
 $$
+\boxed{
 I_{\mathrm{raw}}
 =
 I_{\mathrm{primary}}
@@ -35,14 +36,15 @@ I_{\mathrm{primary}}
 I_{\mathrm{scatter}}
 +
 \epsilon
+}
 $$
 
 where:
 
-* \(I_{\mathrm{raw}}\) is the measured detector signal,
-* \(I_{\mathrm{primary}}\) is the primary radiation,
-* \(I_{\mathrm{scatter}}\) is the scattered radiation,
-* \(\epsilon\) represents noise and other measurement effects.
+*\boxed{ \(I_{\mathrm{raw}}\)} is the measured detector signal,
+* \boxed{\(I_{\mathrm{primary}}\)} is the primary radiation,
+* \boxed{\(I_{\mathrm{scatter}}\)} is the scattered radiation,
+* \boxed{\(\epsilon\)} represents noise and other measurement effects.
 
 The central problem investigated in this repository is therefore:
 
