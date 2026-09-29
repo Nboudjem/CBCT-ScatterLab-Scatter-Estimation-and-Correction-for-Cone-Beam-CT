@@ -64,7 +64,7 @@ I_{\mathrm{corrected}}
 I_{\mathrm{raw}}
 -
 \hat I_{\mathrm{scatter}}.
-```math
+```
 
 ---
 
