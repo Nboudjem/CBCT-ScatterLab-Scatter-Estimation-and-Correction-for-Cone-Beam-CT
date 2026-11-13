@@ -585,9 +585,9 @@ The method has two important characteristics:
 
 The corrected projection intensity is defined as:
 
-$$
+```math
 I_{\mathrm{cor}}(u,v,\alpha) = I(u,v,\alpha) - k_\alpha \sum_i c_i B_i(u,v,\alpha) \tag{1}
-$$
+```
 
 Where:
 * $I(u,v,\alpha)$: measured normalized projection intensity.
