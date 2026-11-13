@@ -560,10 +560,10 @@ The repository will progressively provide **Colab-compatible notebooks** for the
 
 # Empirecal Scattering correction (ESC) method
 
-# Mathematical Formulation of Empirical Scatter Correction (ESC) for CBCT
+## Mathematical Formulation of Empirical Scatter Correction (ESC) for CBCT
 
-Based on: **Trapp et al., *Medical Physics*, 2022, 49, 4566–4584.**  
-DOI: [10.1002/mp.15656](https://doi.org/10.1002/mp.15656)
+> **Based on:** Trapp et al., *Medical Physics*, 2022, 49, 4566–4584.  
+> **DOI:** [10.1002/mp.15656](https://doi.org/10.1002/mp.15656)
 
 ---
 
@@ -585,20 +585,18 @@ The method has two important characteristics:
 
 The corrected projection intensity is defined as:
 
-```math
-
-I_{\mathrm{cor}}(u,v,\alpha) = I(u,v,\alpha) - k_\alpha \sum_i c_i B_i(u,v,\alpha) \tag{1}
-
-```
+$$
+I_{\mathrm{cor}}(u,v,\alpha) = I(u,v,\alpha) - k_\alpha \sum_i c_i B_i(u,v,\alpha)
+$$
 
 Where:
-* $I(u,v,\alpha)$: measured normalized projection intensity.
-* $I_{\mathrm{cor}}(u,v,\alpha)$: corrected projection intensity.
-* $(u,v)$: detector pixel coordinates.
-* $\alpha$: projection angle.
-* $B_i(u,v,\alpha)$: low-frequency scatter basis images.
-* $c_i$: coefficients weighting the individual basis images.
-* $k_\alpha$: scaling factor controlling the correction strength for each projection.
+* $I(u,v,\alpha)$ — measured normalized projection intensity.
+* $I_{\mathrm{cor}}(u,v,\alpha)$ — corrected projection intensity.
+* $(u,v)$ — detector pixel coordinates.
+* $\alpha$ — projection angle.
+* $B_i(u,v,\alpha)$ — low-frequency scatter basis images.
+* $c_i$ — coefficients weighting the individual basis images.
+* $k_\alpha$ — scaling factor controlling the correction strength for each projection.
 
 The estimated scatter intensity is:
 
@@ -620,9 +618,12 @@ $$
 
 To prevent negative corrected intensities, the correction strength is limited by a projection-dependent scaling factor:
 
-```math
-k_\alpha = \begin{cases} \displaystyle \min\left(1,\;\min_{u,v}\left[\frac{I(u,v,\alpha)}{\sum_i c_i B_i(u,v,\alpha)}(1-\delta) \right] \right),&\displaystyle\min_{u,v}\left[I(u,v,\alpha) - \sum_i c_i B_i(u,v,\alpha)\right] < 0 \\[14pt] 1, & \text{otherwise} \end{cases} \tag{2}
-```
+$$
+k_\alpha = \begin{cases} 
+\min\left( 1,\; \min_{u,v} \left[ \dfrac{I(u,v,\alpha)}{\sum_i c_i B_i(u,v,\alpha)} (1-\delta) \right] \right), & \min_{u,v} \left[ I(u,v,\alpha) - \sum_i c_i B_i(u,v,\alpha) \right] < 0 \\[12pt]
+1, & \text{otherwise} 
+\end{cases}
+$$
 
 The paper uses:
 
@@ -649,14 +650,14 @@ This constraint ensures that the corrected intensity remains positive, with a sa
 
 The ESC optimization is performed in the reconstructed image domain. The cost function penalizes reconstructed voxels whose CT values lie outside predefined thresholds in the air and soft tissue regions:
 
-```math
-C(f) =\sum_{x,y,z}\delta(f(x,y,z))\left(1 +\sqrt{\left|f(x,y,z) - T_{\min,\max}(x,y,z)\right|}\right) \tag{3}
-```
+$$
+C(f) = \sum_{x,y,z} \delta(f(x,y,z)) \left( 1 + \sqrt{ \left| f(x,y,z) - T_{\min,\max}(x,y,z) \right| } \right)
+$$
 
 Where:
-* $f(x,y,z)$: reconstructed CT value at voxel $(x,y,z)$.
-* $T_{\min,\max}(x,y,z)$: applicable lower or upper threshold.
-* $\delta(f(x,y,z))$: penalty indicator function defined in Equation (4).
+* $f(x,y,z)$ — reconstructed CT value at voxel $(x,y,z)$.
+* $T_{\min,\max}(x,y,z)$ — applicable lower or upper threshold.
+* $\delta(f(x,y,z))$ — penalty indicator function defined in Equation (4).
 
 The cost increases when reconstructed values fall outside their allowed ranges. The objective of the optimization is:
 
@@ -672,9 +673,12 @@ The coefficients are adjusted to improve the homogeneity of air and soft tissue 
 
 The penalty indicator is defined as:
 
-```math
-\delta(f(x,y,z)) = \begin{cases} 0, & T_{\min}(x,y,z) \leq f(x,y,z) \leq T_{\max}(x,y,z) \\ 1, & \text{otherwise} \end{cases} \tag{4}
-```
+$$
+\delta(f(x,y,z)) = \begin{cases} 
+0, & T_{\min}(x,y,z) \leq f(x,y,z) \leq T_{\max}(x,y,z) \\[6pt]
+1, & \text{otherwise} 
+\end{cases}
+$$
 
 **Interpretation:**
 * If the reconstructed voxel is inside the allowed interval, its penalty is zero.
@@ -688,19 +692,27 @@ The cost function therefore penalizes voxels that do not satisfy the expected CT
 
 The lower and upper thresholds for each segmented region are determined using:
 
-```math
-T_{\min,\max} = \mu_{\mathrm{segment,ref}} \pm 3\sigma_{\mathrm{segment}} \tag{5}
-```
+$$
+T_{\min,\max} = \mu_{\mathrm{segment,ref}} \pm 3\sigma_{\mathrm{segment}}
+$$
 
 Where:
-* $\mu_{\mathrm{segment,ref}}$: reference CT value for the segmented region.
-* $\sigma_{\mathrm{segment}}$: expected standard deviation of CT values in that region.
+* $\mu_{\mathrm{segment,ref}}$ — reference CT value for the segmented region.
+* $\sigma_{\mathrm{segment}}$ — expected standard deviation of CT values in that region.
 
 The paper gives the following reference values:
+
 * **Air:** $\mu_{\mathrm{air,ref}} = -1000\ \mathrm{HU}$, yielding threshold bounds:
-  $$T_{\min,\mathrm{air}} = -1000 - 3\sigma_{\mathrm{air}}, \qquad T_{\max,\mathrm{air}} = -1000 + 3\sigma_{\mathrm{air}}$$
+
+$$
+T_{\min,\mathrm{air}} = -1000 - 3\sigma_{\mathrm{air}}, \qquad T_{\max,\mathrm{air}} = -1000 + 3\sigma_{\mathrm{air}}
+$$
+
 * **Water-equivalent soft tissue:** $\mu_{\mathrm{soft\ tissue,ref}} = 0\ \mathrm{HU}$, yielding threshold bounds:
-  $$T_{\min,\mathrm{soft}} = -3\sigma_{\mathrm{soft}}, \qquad T_{\max,\mathrm{soft}} = +3\sigma_{\mathrm{soft}}$$
+
+$$
+T_{\min,\mathrm{soft}} = -3\sigma_{\mathrm{soft}}, \qquad T_{\max,\mathrm{soft}} = +3\sigma_{\mathrm{soft}}
+$$
 
 The standard deviations are estimated from regions of interest in the initial reconstruction.
 
@@ -713,43 +725,48 @@ The standard deviations are estimated from regions of interest in the initial re
 ESC uses low-frequency basis images to estimate the scatter intensity. The paper uses a modification of the PEP model proposed by Ohnesorge et al.
 
 ### Equation (6): PEP Scatter Model
+
 The scatter intensity is approximated by:
 
-```math
-I_S(u,v) = K_S(u,v) * \left[ W(I(u,v))^m (-\ln(I(u,v)))^n \right] \tag{6}
-```
+$$
+I_S(u,v) = K_S(u,v) * \left[ W(I(u,v))^m (-\ln(I(u,v)))^n \right]
+$$
 
 Where:
-* $I(u,v)$: normalized measured projection intensity.
-* $I_S(u,v)$: estimated scatter intensity.
-* $W(I)$: intensity-dependent transfer function.
-* $m, n$: empirical model parameters.
-* $K_S$: scatter convolution kernel.
-* $*$: two-dimensional convolution operator.
+* $I(u,v)$ — normalized measured projection intensity.
+* $I_S(u,v)$ — estimated scatter intensity.
+* $W(I)$ — intensity-dependent transfer function.
+* $m, n$ — empirical model parameters.
+* $K_S$ — scatter convolution kernel.
+* $*$ — two-dimensional convolution operator.
 
 The model generates a smooth, low-frequency representation of the scatter distribution.
 
 ### Equation (7): Transfer Function
+
 The transfer function is:
 
-```math
-W(I(u,v)) =\begin{cases} I(u,v), & I(u,v) < \epsilon \\
-0, & \text{otherwise} \end{cases} \tag{7}
-```
+$$
+W(I(u,v)) = \begin{cases} 
+I(u,v), & I(u,v) < \epsilon \\[6pt]
+0, & \text{otherwise} 
+\end{cases}
+$$
 
 Where $\epsilon$ is an empirical threshold parameter. This function selects projection intensities below the specified threshold. The selected intensities are combined with the logarithmic projection information and smoothed using the convolution kernel.
 
 ### Equation (8): Asymmetric Gaussian Convolution Kernel
+
 The scatter convolution kernel is defined as:
 
-```math
-K_S(u - u', v - v') = \exp\left( -\frac{(u-u')^2}{2\sigma_u^2} -\frac{(v-v')^2}{2\sigma_v^2} \right) \tag{8}
-```
+$$
+K_S(u - u', v - v') = \exp\left( -\frac{(u-u')^2}{2\sigma_u^2} -\frac{(v-v')^2}{2\sigma_v^2} \right)
+$$
 
 Where:
-* $\sigma_u$: Gaussian standard deviation in the horizontal detector direction.
-* $\sigma_v$: Gaussian standard deviation in the vertical detector direction.
-* $(u',v')$: coordinates within the convolution neighborhood.
+* $\sigma_u$ — Gaussian standard deviation in the horizontal detector direction.
+* $\sigma_v$ — Gaussian standard deviation in the vertical detector direction.
+* $(u',v')$ — coordinates within the convolution neighborhood.
 
 The kernel is truncated to finite dimensions:
 
@@ -797,9 +814,9 @@ $$
 $$
 
 Where:
-* $c_1, c_2, c_3, c_4$: weights of the four PEP basis images.
-* $c_5$: weight of the constant-offset basis.
-* $c_I$: intensity scaling parameter applied to the reconstructed volume before cost evaluation.
+* $c_1, c_2, c_3, c_4$ — weights of the four PEP basis images.
+* $c_5$ — weight of the constant-offset basis.
+* $c_I$ — intensity scaling parameter applied to the reconstructed volume before cost evaluation.
 
 The coefficients $c_i$ are initialized at small positive values, while $c_I$ is initialized near one. The coefficients $c_i$ are constrained to positive values to prevent physically invalid negative scatter contributions.
 
@@ -847,7 +864,11 @@ $$
 f = c_I \, \mathcal{R}\left[p_{\mathrm{cor}}(u,v,\alpha)\right]
 $$
 
-The coefficient $c_I$ compensates for possible intensity calibration offsets. The cost function is evaluated on this intermediate volume: $C = C(f)$.
+The coefficient $c_I$ compensates for possible intensity calibration offsets. The cost function is evaluated on this intermediate volume:
+
+$$
+C = C(f)
+$$
 
 ---
 
@@ -855,11 +876,12 @@ The coefficient $c_I$ compensates for possible intensity calibration offsets. Th
 
 ESC uses the Nelder–Mead simplex optimization algorithm:
 
-```math
+$$
 \boldsymbol{\theta}_{\mathrm{opt}} = \underset{\boldsymbol{\theta}}{\operatorname{argmin}} \ C\left(f(\boldsymbol{\theta})\right) \quad \text{subject to } c_i \geq 0
-```
+$$
 
 With optimization parameters $\boldsymbol{\theta} = (c_1, c_2, c_3, c_4, c_5, c_I)$, the procedure is:
+
 1. Initialize the coefficients $c_i$ and $c_I$.
 2. Calculate the scaling factor $k_\alpha$.
 3. Estimate scatter from the basis images.
@@ -905,22 +927,101 @@ For our implementation, the reconstruction operator is ASTRA's `FDK_CUDA` algori
 
 ## 15. Complete ESC Algorithm: Mathematical Sequence
 
-* **Step 1 — Normalize projection intensities:** $I = \frac{I_{\mathrm{raw}} - D}{F - D}$, where $D$ is the dark-field image and $F$ is the flat-field image.
-* **Step 2 — Select and downsample projection data:** $I(u,v,\alpha) \longrightarrow I'(u',v',\alpha')$.
-* **Step 3 — Initial reconstruction:** $f_0 = \mathcal{R}[-\ln(I')]$.
-* **Step 4 — Generate air and soft tissue masks:** $$M_{\mathrm{air}}, M_{\mathrm{soft}} = \operatorname{Otsu}(f_0)$$.
-* **Step 5 — Calculate threshold intervals:** $T_{\min,\max} = \mu_{\mathrm{segment,ref}} \pm 3\sigma_{\mathrm{segment}}$.
-* **Step 6 — Generate PEP basis images:** $B_i = K_{S,i} * \left[ W(I')^{m_i}(-\ln I')^{n_i} \right]$.
-* **Step 7 — Initialize optimization parameters:** $\boldsymbol{\theta}_0 = (c_1, c_2, c_3, c_4, c_5, c_I)$.
+* **Step 1 — Normalize projection intensities:**
+
+$$
+I = \frac{I_{\mathrm{raw}} - D}{F - D}
+$$
+
+  where $D$ is the dark-field image and $F$ is the flat-field image.
+
+* **Step 2 — Select and downsample projection data:**
+
+$$
+I(u,v,\alpha) \longrightarrow I'(u',v',\alpha')
+$$
+
+* **Step 3 — Initial reconstruction:**
+
+$$
+f_0 = \mathcal{R}[-\ln(I')]
+$$
+
+* **Step 4 — Generate air and soft tissue masks:**
+
+$$
+M_{\mathrm{air}}, M_{\mathrm{soft}} = \operatorname{Otsu}(f_0)
+$$
+
+* **Step 5 — Calculate threshold intervals:**
+
+$$
+T_{\min,\max} = \mu_{\mathrm{segment,ref}} \pm 3\sigma_{\mathrm{segment}}
+$$
+
+* **Step 6 — Generate PEP basis images:**
+
+$$
+B_i = K_{S,i} * \left[ W(I')^{m_i}(-\ln I')^{n_i} \right]
+$$
+
+* **Step 7 — Initialize optimization parameters:**
+
+$$
+\boldsymbol{\theta}_0 = (c_1, c_2, c_3, c_4, c_5, c_I)
+$$
+
 * **Step 8 — Calculate the scaling factor:** $k_{\alpha'}$ via Equation (2).
-* **Step 9 — Estimate and subtract scatter:** $I'_{\mathrm{cor}} = I' - k_{\alpha'} \sum_i c_i B'_i$.
-* **Step 10 — Convert to logarithmic projections:** $p'_{\mathrm{cor}} = -\ln(I'_{\mathrm{cor}})$.
-* **Step 11 — Reconstruct the intermediate volume:** $f = c_I \mathcal{R}'(p'_{\mathrm{cor}})$.
-* **Step 12 — Evaluate the cost function:** $C(f) = \sum_{x,y,z} \delta(f)\left(1 + \sqrt{|f - T_{\min,\max}|}\right)$.
-* **Step 13 — Optimize the coefficients:** $\boldsymbol{\theta}_{\mathrm{opt}} = \operatorname{argmin}_{\boldsymbol{\theta}} C(f)$ (repeat Steps 8–13 for $50$ iterations).
-* **Step 14 — Upsample and interpolate basis images:** $B'_i \longrightarrow B_i$.
-* **Step 15 — Correct the original projection intensities:** $I_{\mathrm{cor}} = I - k_\alpha \sum_i c_{i,\mathrm{opt}} B_i$.
-* **Step 16 — Perform final FDK reconstruction:** $f_{\mathrm{cor}} = \mathcal{R}\left[-\ln(I_{\mathrm{cor}})\right]$.
+
+* **Step 9 — Estimate and subtract scatter:**
+
+$$
+I'_{\mathrm{cor}} = I' - k_{\alpha'} \sum_i c_i B'_i
+$$
+
+* **Step 10 — Convert to logarithmic projections:**
+
+$$
+p'_{\mathrm{cor}} = -\ln(I'_{\mathrm{cor}})
+$$
+
+* **Step 11 — Reconstruct the intermediate volume:**
+
+$$
+f = c_I \mathcal{R}'(p'_{\mathrm{cor}})
+$$
+
+* **Step 12 — Evaluate the cost function:**
+
+$$
+C(f) = \sum_{x,y,z} \delta(f)\left(1 + \sqrt{|f - T_{\min,\max}|}\right)
+$$
+
+* **Step 13 — Optimize the coefficients:**
+
+$$
+\boldsymbol{\theta}_{\mathrm{opt}} = \underset{\boldsymbol{\theta}}{\operatorname{argmin}} \ C(f)
+$$
+
+  (repeat Steps 8–13 for $50$ iterations).
+
+* **Step 14 — Upsample and interpolate basis images:**
+
+$$
+B'_i \longrightarrow B_i
+$$
+
+* **Step 15 — Correct the original projection intensities:**
+
+$$
+I_{\mathrm{cor}} = I - k_\alpha \sum_i c_{i,\mathrm{opt}} B_i
+$$
+
+* **Step 16 — Perform final FDK reconstruction:**
+
+$$
+f_{\mathrm{cor}} = \mathcal{R}\left[-\ln(I_{\mathrm{cor}})\right]
+$$
 
 ---
 
@@ -929,6 +1030,7 @@ For our implementation, the reconstruction operator is ASTRA's `FDK_CUDA` algori
 For our study, we apply the ESC formulation to the `Walnut1` dataset, using only the `tubeV1` projections. The implementation retains the original ASTRA geometry and FDK reconstruction framework.
 
 ### Computational Stages
+
 1. Load the $1200$ projection images.
 2. Apply dark-field and flat-field normalization.
 3. Preserve normalized intensity data before logarithmic transformation.
