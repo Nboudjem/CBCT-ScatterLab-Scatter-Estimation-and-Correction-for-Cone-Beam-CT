@@ -369,10 +369,6 @@ For Conda, the development version is available through the:
 
 channel.
 
-The original MATLAB `GroundTruthReconstruction.m` additionally uses the **SPOT toolbox**.
-
-These requirements may evolve as the scatter-correction pipeline is developed.
-
 ---
 
 # 🏗️ Repository Structure
@@ -622,7 +618,7 @@ $$
 
 To prevent negative corrected intensities, the correction strength is limited by a projection-dependent scaling factor:
 
-$$
+```math
 k_\alpha =
 \begin{cases}
 \displaystyle
@@ -644,7 +640,7 @@ I(u,v,\alpha) - \sum_i c_i B_i(u,v,\alpha)
 \\[14pt]
 1, & \text{otherwise}
 \end{cases} \tag{2}
-$$
+```
 
 The paper uses:
 
@@ -672,17 +668,7 @@ This constraint ensures that the corrected intensity remains positive, with a sa
 The ESC optimization is performed in the reconstructed image domain. The cost function penalizes reconstructed voxels whose CT values lie outside predefined thresholds in the air and soft tissue regions:
 
 $$
-C(f) =
-\sum_{x,y,z}
-\delta(f(x,y,z))
-\left(
-1 +
-\sqrt{
-\left|
-f(x,y,z) - T_{\min,\max}(x,y,z)
-\right|
-}
-\right) \tag{3}
+C(f) =\sum_{x,y,z}\delta(f(x,y,z))\left(1 +\sqrt{\left|f(x,y,z) - T_{\min,\max}(x,y,z)\right|}\right) \tag{3}
 $$
 
 Where:
