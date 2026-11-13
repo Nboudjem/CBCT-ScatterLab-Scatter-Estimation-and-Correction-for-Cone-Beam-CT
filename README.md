@@ -586,7 +586,9 @@ The method has two important characteristics:
 The corrected projection intensity is defined as:
 
 ```math
+
 I_{\mathrm{cor}}(u,v,\alpha) = I(u,v,\alpha) - k_\alpha \sum_i c_i B_i(u,v,\alpha) \tag{1}
+
 ```
 
 Where:
@@ -619,27 +621,7 @@ $$
 To prevent negative corrected intensities, the correction strength is limited by a projection-dependent scaling factor:
 
 ```math
-k_\alpha =
-\begin{cases}
-\displaystyle
-\min\left(
-1,\;
-\min_{u,v}
-\left[
-\frac{I(u,v,\alpha)}
-{\sum_i c_i B_i(u,v,\alpha)}
-(1-\delta)
-\right]
-\right),
-&
-\displaystyle
-\min_{u,v}
-\left[
-I(u,v,\alpha) - \sum_i c_i B_i(u,v,\alpha)
-\right] < 0
-\\[14pt]
-1, & \text{otherwise}
-\end{cases} \tag{2}
+k_\alpha = \begin{cases} \displaystyle \min\left(1,\;\min_{u,v}\left[\frac{I(u,v,\alpha)}{\sum_i c_i B_i(u,v,\alpha)}(1-\delta) \right] \right),&\displaystyle\min_{u,v}\left[I(u,v,\alpha) - \sum_i c_i B_i(u,v,\alpha)\right] < 0 \\[14pt] 1, & \text{otherwise} \end{cases} \tag{2}
 ```
 
 The paper uses:
@@ -667,9 +649,9 @@ This constraint ensures that the corrected intensity remains positive, with a sa
 
 The ESC optimization is performed in the reconstructed image domain. The cost function penalizes reconstructed voxels whose CT values lie outside predefined thresholds in the air and soft tissue regions:
 
-$$
+```math
 C(f) =\sum_{x,y,z}\delta(f(x,y,z))\left(1 +\sqrt{\left|f(x,y,z) - T_{\min,\max}(x,y,z)\right|}\right) \tag{3}
-$$
+```
 
 Where:
 * $f(x,y,z)$: reconstructed CT value at voxel $(x,y,z)$.
@@ -690,13 +672,9 @@ The coefficients are adjusted to improve the homogeneity of air and soft tissue 
 
 The penalty indicator is defined as:
 
-$$
-\delta(f(x,y,z)) =
-\begin{cases}
-0, & T_{\min}(x,y,z) \leq f(x,y,z) \leq T_{\max}(x,y,z) \\
-1, & \text{otherwise}
-\end{cases} \tag{4}
-$$
+```math
+\delta(f(x,y,z)) = \begin{cases} 0, & T_{\min}(x,y,z) \leq f(x,y,z) \leq T_{\max}(x,y,z) \\ 1, & \text{otherwise} \end{cases} \tag{4}
+```
 
 **Interpretation:**
 * If the reconstructed voxel is inside the allowed interval, its penalty is zero.
@@ -710,9 +688,9 @@ The cost function therefore penalizes voxels that do not satisfy the expected CT
 
 The lower and upper thresholds for each segmented region are determined using:
 
-$$
+```math
 T_{\min,\max} = \mu_{\mathrm{segment,ref}} \pm 3\sigma_{\mathrm{segment}} \tag{5}
-$$
+```
 
 Where:
 * $\mu_{\mathrm{segment,ref}}$: reference CT value for the segmented region.
@@ -737,9 +715,9 @@ ESC uses low-frequency basis images to estimate the scatter intensity. The paper
 ### Equation (6): PEP Scatter Model
 The scatter intensity is approximated by:
 
-$$
+```math
 I_S(u,v) = K_S(u,v) * \left[ W(I(u,v))^m (-\ln(I(u,v)))^n \right] \tag{6}
-$$
+```
 
 Where:
 * $I(u,v)$: normalized measured projection intensity.
@@ -754,22 +732,19 @@ The model generates a smooth, low-frequency representation of the scatter distri
 ### Equation (7): Transfer Function
 The transfer function is:
 
-$$
-W(I(u,v)) =
-\begin{cases}
-I(u,v), & I(u,v) < \epsilon \\
-0, & \text{otherwise}
-\end{cases} \tag{7}
-$$
+```math
+W(I(u,v)) =\begin{cases} I(u,v), & I(u,v) < \epsilon \\
+0, & \text{otherwise} \end{cases} \tag{7}
+```
 
 Where $\epsilon$ is an empirical threshold parameter. This function selects projection intensities below the specified threshold. The selected intensities are combined with the logarithmic projection information and smoothed using the convolution kernel.
 
 ### Equation (8): Asymmetric Gaussian Convolution Kernel
 The scatter convolution kernel is defined as:
 
-$$
+```math
 K_S(u - u', v - v') = \exp\left( -\frac{(u-u')^2}{2\sigma_u^2} -\frac{(v-v')^2}{2\sigma_v^2} \right) \tag{8}
-$$
+```
 
 Where:
 * $\sigma_u$: Gaussian standard deviation in the horizontal detector direction.
@@ -880,9 +855,9 @@ The coefficient $c_I$ compensates for possible intensity calibration offsets. Th
 
 ESC uses the Nelder–Mead simplex optimization algorithm:
 
-$$
+```math
 \boldsymbol{\theta}_{\mathrm{opt}} = \underset{\boldsymbol{\theta}}{\operatorname{argmin}} \ C\left(f(\boldsymbol{\theta})\right) \quad \text{subject to } c_i \geq 0
-$$
+```
 
 With optimization parameters $\boldsymbol{\theta} = (c_1, c_2, c_3, c_4, c_5, c_I)$, the procedure is:
 1. Initialize the coefficients $c_i$ and $c_I$.
@@ -933,7 +908,7 @@ For our implementation, the reconstruction operator is ASTRA's `FDK_CUDA` algori
 * **Step 1 — Normalize projection intensities:** $I = \frac{I_{\mathrm{raw}} - D}{F - D}$, where $D$ is the dark-field image and $F$ is the flat-field image.
 * **Step 2 — Select and downsample projection data:** $I(u,v,\alpha) \longrightarrow I'(u',v',\alpha')$.
 * **Step 3 — Initial reconstruction:** $f_0 = \mathcal{R}[-\ln(I')]$.
-* **Step 4 — Generate air and soft tissue masks:** $M_{\mathrm{air}}, M_{\mathrm{soft}} = \operatorname{Otsu}(f_0)$.
+* **Step 4 — Generate air and soft tissue masks:** $$M_{\mathrm{air}}, M_{\mathrm{soft}} = \operatorname{Otsu}(f_0)$$.
 * **Step 5 — Calculate threshold intervals:** $T_{\min,\max} = \mu_{\mathrm{segment,ref}} \pm 3\sigma_{\mathrm{segment}}$.
 * **Step 6 — Generate PEP basis images:** $B_i = K_{S,i} * \left[ W(I')^{m_i}(-\ln I')^{n_i} \right]$.
 * **Step 7 — Initialize optimization parameters:** $\boldsymbol{\theta}_0 = (c_1, c_2, c_3, c_4, c_5, c_I)$.
