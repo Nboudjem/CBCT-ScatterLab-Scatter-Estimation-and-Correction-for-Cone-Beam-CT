@@ -854,7 +854,7 @@ C = C(f)
 ESC uses the Nelder–Mead simplex optimization algorithm:
 
 ```math
-\boldsymbol{\theta}_{\mathrm{opt}} = \underset{\boldsymbol{\theta}}{\operatorname{argmin}} \ C\left(f(\boldsymbol{\theta})\right) \quad \text{subject to } c_i \geq 0
+\boldsymbol{\theta}_{\mathrm{opt}} = \underset{\boldsymbol{\theta}}{\mathrm{arg\,min}} \ C\left(f(\boldsymbol{\theta})\right) \quad \text{subject to } c_i \geq 0
 ```
 
 With optimization parameters $`\boldsymbol{\theta} = (c_1, c_2, c_3, c_4, c_5, c_I)`$, the procedure is:
@@ -921,7 +921,7 @@ f_0 = \mathcal{R}[-\ln(I')]
 * **Step 4 — Generate air and soft tissue masks:**
 
 ```math
-M_{\mathrm{air}}, M_{\mathrm{soft}} = \operatorname{Otsu}(f_0)
+M_{\mathrm{air}}, M_{\mathrm{soft}} = \mathrm{Otsu}(f_0)
 ```
 
 * **Step 5 — Calculate threshold intervals:**
@@ -971,7 +971,7 @@ C(f) = \sum_{x,y,z} \delta(f)\left(1 + \sqrt{|f - T_{\min,\max}|}\right)
 * **Step 13 — Optimize the coefficients:**
 
 ```math
-\boldsymbol{\theta}_{\mathrm{opt}} = \underset{\boldsymbol{\theta}}{\operatorname{argmin}} \ C(f)
+\boldsymbol{\theta}_{\mathrm{opt}} = \underset{\boldsymbol{\theta}}{\mathrm{arg\,min}} \ C(f)
 ```
 
 (repeat Steps 8–13 for $`50`$ iterations).
