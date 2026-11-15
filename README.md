@@ -202,61 +202,6 @@ R(S)
 
 This allows scatter to be modeled as a component that is smooth both across the detector and across neighboring projection angles.
 
----
-
-# 🧠 CBCT → CT and Scatter
-
-CBCT-to-CT image translation can reduce the **appearance and consequences** of scatter-related artifacts, but synthetic CT generation and explicit scatter estimation are not necessarily the same problem.
-
-This project therefore focuses primarily on **estimating the scatter component in projection data**, while also investigating whether CBCT-to-synthetic-CT methods can provide useful priors for the inverse problem.
-
-A possible future pipeline is:
-
-```text
-Raw CBCT projections
-        │
-        ▼
-Scatter estimation
-        │
-        ▼
-Scatter correction
-        │
-        ▼
-Corrected projections
-        │
-        ▼
-Log transformation
-        │
-        ▼
-FDK reconstruction
-        │
-        ▼
-Scatter-reduced CBCT
-```
-
-A more advanced approach may incorporate synthetic CT:
-
-```text
-Raw CBCT projections
-        │
-        ▼
-Initial reconstruction
-        │
-        ▼
-CBCT → synthetic CT
-        │
-        ▼
-Forward projection
-        │
-        ▼
-Primary / scatter estimation
-        │
-        ▼
-Projection correction
-        │
-        ▼
-FDK reconstruction
-```
 
 ---
 
@@ -371,38 +316,7 @@ channel.
 
 ---
 
-# 🏗️ Repository Structure
 
-The repository is currently being organized around the following structure:
-
-```text
-cbct-scatterlab/
-│
-├── README.md
-│
-├── data/
-│   └── README.md
-│
-├── src/
-│   ├── preprocessing/
-│   ├── scatter/
-│   ├── reconstruction/
-│   ├── models/
-│   └── evaluation/
-│
-├── notebooks/
-│   ├── exploration/
-│   └── experiments/
-│
-├── configs/
-├── tests/
-├── results/
-└── docs/
-```
-
-The Walnut dataset itself should **not be duplicated inside the repository**. Instead, the repository will contain instructions for downloading and organizing the data locally.
-
----
 
 # 🚀 Roadmap
 
@@ -424,17 +338,6 @@ The Walnut dataset itself should **not be duplicated inside the repository**. In
 
 ---
 
-# ⚠️ Project Status
-
-> **🚧 UNDER CONSTRUCTION**
-
-This repository is currently an **early-stage research project**.
-
-The mathematical formulation, preprocessing pipeline, experimental methodology, and code structure are actively being developed.
-
-Results should therefore be considered **preliminary and experimental**.
-
----
 
 # 📚 Main References
 
@@ -458,97 +361,6 @@ The initial reconstruction and preprocessing work is based on the **WalnutRecons
 
 The project is intended to support experimentation both locally and through **Google Colab**, particularly for GPU-intensive reconstruction and machine-learning experiments.
 
-### Google Colab
-
-[Google Colab](https://colab.research.google.com/) can be used to run the notebooks without requiring a local GPU installation.
-
-Colab is particularly useful for:
-
-* exploring the Walnut projection data
-* preprocessing CBCT projections
-* testing reconstruction methods
-* running GPU-accelerated reconstruction
-* training and evaluating deep-learning models
-* experimenting with projection-domain scatter estimation
-* prototyping CBCT → synthetic CT models
-
-A typical workflow is:
-
-```text
-Walnut dataset
-      │
-      ▼
-Google Colab
-      │
-      ├── Data loading
-      ├── Preprocessing
-      ├── Scatter estimation
-      ├── Reconstruction
-      └── Deep-learning experiments
-      │
-      ▼
-GPU acceleration
-```
-
-## GPU Resources
-
-GPU acceleration is expected to be particularly useful for:
-
-* iterative reconstruction
-* large-scale projection processing
-* Monte Carlo experiments
-* 3D neural networks
-* CBCT → CT translation
-* CNN-based scatter estimation
-* physics-informed models
-
-The project will therefore provide notebooks that can detect and use an available CUDA-enabled GPU when running in Colab.
-
-Example environment check:
-
-```python
-import torch
-
-print("PyTorch:", torch.__version__)
-print("CUDA available:", torch.cuda.is_available())
-
-if torch.cuda.is_available():
-    print("GPU:", torch.cuda.get_device_name(0))
-```
-
-For CUDA-enabled environments, computationally intensive operations should preferentially be performed on the GPU where supported.
-
-## Reproducibility
-
-Because Google Colab GPU availability and hardware can vary between sessions, experiments should record:
-
-* GPU model
-* CUDA version
-* Python version
-* PyTorch version
-* ASTRA Toolbox version
-* dataset / walnut identifier
-* reconstruction parameters
-* model configuration
-* random seeds where applicable
-
-This information should be saved alongside experimental results whenever possible.
-
-## Local vs. Colab Execution
-
-The project is intended to support both workflows:
-
-| Environment      | Intended use                                          |
-| ---------------- | ----------------------------------------------------- |
-| 💻 Local CPU     | preprocessing, visualization, lightweight experiments |
-| 🖥️ Local GPU    | large-scale reconstruction and deep learning          |
-| ☁️ Google Colab  | reproducible notebooks and GPU experiments            |
-| 🚀 GPU resources | computationally intensive training and reconstruction |
-
-The repository will progressively provide **Colab-compatible notebooks** for the main experimental pipelines.
-
-
----
 
 ## 👤 Project
 
