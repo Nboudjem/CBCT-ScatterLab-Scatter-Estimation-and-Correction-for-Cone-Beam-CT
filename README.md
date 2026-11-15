@@ -1,8 +1,8 @@
-# CBCT-ScatterLab / Under construction!!!!!!!!!!!
+# CBCT-ScatterLab 
 
 ### Scatter Estimation and Correction for Cone-Beam CT
 
-> 🚧 **Under construction — research project in active development**
+> 🚧 **Research project**
 
 **CBCT-ScatterLab** is a research repository focused on the **estimation, modeling, and correction of X-ray scatter in Cone-Beam Computed Tomography (CBCT)**.
 
